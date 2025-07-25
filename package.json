@@ -2,7 +2,7 @@
 {
   "name": "as-sweida-memory-platform",
   "version": "1.0.0",
-  "description": "Interactive platform to preserve the memory of the As-Sweida massacre",
+  "description": "Platform to preserve the memory of the As-Sweida massacre",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
