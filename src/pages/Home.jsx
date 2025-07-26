@@ -1,3 +1,4 @@
+import UploadHeroModal from '../components/UploadHeroModal';
 
 import React from 'react'
 import HeroCard from '../components/HeroCard'
