@@ -11,6 +11,7 @@ const translations = {
         imagesLabel: ":صور إضافية",
         videosLabel: ":فيديوهات",
         submit: "إرسال",
+        cancel: "إلغاء",
         sent: "تم إرسال النموذج"
     },
     en: {
@@ -21,6 +22,7 @@ const translations = {
         imagesLabel: "Additional Images:",
         videosLabel: "Videos:",
         submit: "Submit",
+        cancel: "Cancel",
         sent: "Form submitted successfully"
     }
 };
@@ -37,6 +39,7 @@ const UploadHeroModal = () => {
 
     const { lang } = useLanguage();
     const t = translations[lang] || translations.en;
+    const isRTL = lang === 'ar';
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -95,37 +98,64 @@ const UploadHeroModal = () => {
                 <div className="modal-overlay">
                     <div
                         className="modal-content"
-                        dir={lang === 'ar' ? 'rtl' : 'ltr'}
-                        style={{ textAlign: lang === 'ar' ? 'right' : 'left' }}
+                        dir={isRTL ? 'rtl' : 'ltr'}
+                        style={{ textAlign: isRTL ? 'right' : 'left' }}
                     >
-                        <button
-                            className="close-button"
-                            style={{ left: lang === 'ar' ? '15px' : 'unset', right: lang === 'ar' ? 'unset' : '15px' }}
-                            onClick={() => setShowModal(false)}
-                        >
-                            ✖
-                        </button>
-
                         <h2>{t.uploadTitle}</h2>
                         <form onSubmit={handleSubmit}>
                             <label>{t.nameLabel}</label>
-                            <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                style={{
+                                    direction: isRTL ? 'rtl' : 'ltr',
+                                    textAlign: isRTL ? 'right' : 'left'
+                                }}
+                                required
+                            />
 
                             <label>{t.storyLabel}</label>
-                            <textarea name="story" value={formData.story} onChange={handleChange} required />
+                            <textarea
+                                name="story"
+                                value={formData.story}
+                                onChange={handleChange}
+                                rows="5"
+                                style={{
+                                    direction: isRTL ? 'rtl' : 'ltr',
+                                    textAlign: isRTL ? 'right' : 'left'
+                                }}
+                                required
+                            />
 
                             <label>{t.profileImageLabel}</label>
-                            <input type="file" name="profileImage" accept="image/*" onChange={handleChange} />
+                            <input type="file" name="profileImage" accept="image/*" onChange={handleChange} required />
 
                             <label>{t.imagesLabel}</label>
-                            <input type="file" name="images" onChange={handleChange} accept="image/*" multiple />
+                            <input type="file" name="images" accept="image/*" multiple onChange={handleChange} />
 
                             <label>{t.videosLabel}</label>
-                            <input type="file" name="videos" onChange={handleChange} accept="video/*" multiple />
+                            <input type="file" name="videos" accept="video/*" multiple onChange={handleChange} />
 
                             <button type="submit">{t.submit}</button>
                         </form>
-                    </div>
+                        <button
+                            type="button"
+                            onClick={() => setShowModal(false)}
+                            style={{
+                                backgroundColor: 'red',
+                                color: 'white',
+                                padding: '8px 16px',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                marginTop: '10px'
+                            }}
+                        >
+                            {t.cancel}
+                        </button>
+                 </div>
                 </div>
             )}
         </>

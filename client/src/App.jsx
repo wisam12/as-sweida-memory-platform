@@ -8,7 +8,6 @@ import UploadHeroModal from './components/UploadHeroModal';
 import { LanguageProvider, useLanguage } from './LanguageContext';
 
 function MainLayout() {
-    const [selectedHero, setSelectedHero] = React.useState(null);
     const { lang, setLang, t } = useLanguage();
 
     return (
@@ -24,12 +23,13 @@ function MainLayout() {
                 </select>
             </nav>
             <Routes>
-                <Route path="/" element={<Home setRoute={() => { }} setSelectedHero={setSelectedHero} />} />
-                <Route path="/profile" element={<HeroProfile name={selectedHero} onBack={() => window.history.back()} />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/hero" element={<HeroProfile />} />
             </Routes>
         </div>
     );
 }
+
 
 export default function App() {
     return (
