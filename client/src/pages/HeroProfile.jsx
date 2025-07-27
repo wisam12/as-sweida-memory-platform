@@ -27,7 +27,7 @@ export default function HeroProfile() {
 
             {hero.videos && hero.videos.length > 0 && (
                 <video controls width="100%" style={{ marginTop: '20px' }}>
-                    <source src={`http://localhost:5000${encodeURI(hero.videos[0])}`} type="video/mp4" />
+                    <source src={encodeURI(hero.videos[0])} type="video/mp4" />
                     {lang === 'ar'
                         ? 'المتصفح لا يدعم تشغيل الفيديو'
                         : 'Your browser does not support the video tag.'}
