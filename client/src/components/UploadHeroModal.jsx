@@ -7,19 +7,21 @@ const translations = {
         uploadTitle: "أضف قصة بطل",
         nameLabel: ":اسم البطل",
         storyLabel: ":القصة",
-        imagesLabel: ":صور",
+        profileImageLabel: ":صورة الملف الشخصي",
+        imagesLabel: ":صور إضافية",
         videosLabel: ":فيديوهات",
         submit: "إرسال",
-        sent: "تم إرسال النموذج (وهمي - لم يتم بعد تفعيل السيرفر)"
+        sent: "تم إرسال النموذج"
     },
     en: {
         uploadTitle: "Upload Hero Story",
         nameLabel: "Hero Name:",
         storyLabel: "Story:",
-        imagesLabel: "Images:",
+        profileImageLabel: "Profile Picture:",
+        imagesLabel: "Additional Images:",
         videosLabel: "Videos:",
         submit: "Submit",
-        sent: "Form submitted (mock - backend not implemented yet)"
+        sent: "Form submitted successfully"
     }
 };
 
@@ -28,6 +30,7 @@ const UploadHeroModal = () => {
     const [formData, setFormData] = useState({
         name: '',
         story: '',
+        profileImage: null,
         images: [],
         videos: []
     });
@@ -38,7 +41,11 @@ const UploadHeroModal = () => {
     const handleChange = (e) => {
         const { name, value, files } = e.target;
         if (files) {
-            setFormData((prev) => ({ ...prev, [name]: Array.from(files) }));
+            if (name === "profileImage") {
+                setFormData((prev) => ({ ...prev, profileImage: files[0] }));
+            } else {
+                setFormData((prev) => ({ ...prev, [name]: Array.from(files) }));
+            }
         } else {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
@@ -50,6 +57,10 @@ const UploadHeroModal = () => {
         const form = new FormData();
         form.append("name", formData.name);
         form.append("story", formData.story);
+
+        if (formData.profileImage) {
+            form.append("profileImage", formData.profileImage);
+        }
 
         formData.images.forEach((file) => form.append("images", file));
         formData.videos.forEach((file) => form.append("videos", file));
@@ -73,7 +84,6 @@ const UploadHeroModal = () => {
             alert("❌ Network error – check server is running");
         }
     };
-
 
     return (
         <>
@@ -103,6 +113,9 @@ const UploadHeroModal = () => {
 
                             <label>{t.storyLabel}</label>
                             <textarea name="story" value={formData.story} onChange={handleChange} required />
+
+                            <label>{t.profileImageLabel}</label>
+                            <input type="file" name="profileImage" accept="image/*" onChange={handleChange} />
 
                             <label>{t.imagesLabel}</label>
                             <input type="file" name="images" onChange={handleChange} accept="image/*" multiple />

@@ -2,7 +2,7 @@
 import { useLanguage } from '../LanguageContext';
 import { useNavigate } from 'react-router-dom';
 
-export default function Home() {
+export default function Home({ setSelectedHero, setRoute }) {
     const { lang, t } = useLanguage();
     const [heroes, setHeroes] = useState([]);
     const navigate = useNavigate();
@@ -16,47 +16,48 @@ export default function Home() {
 
     return (
         <div style={{ padding: '30px', color: 'white' }}>
-            <h1 style={{ fontSize: '2rem', marginBottom: '10px' }}>{t.title}</h1>
-            <p style={{ marginBottom: '30px' }}>{t.subtitle}</p>
+            <h1>{t.title}</h1>
+            <p>{t.subtitle}</p>
 
-            {heroes.length === 0 && (
-                <p>{lang === 'ar' ? 'لا يوجد أبطال حالياً.' : 'No heroes yet.'}</p>
-            )}
+            {heroes.length === 0 && <p>{lang === 'ar' ? 'لا يوجد أبطال حالياً.' : 'No heroes yet.'}</p>}
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
                 {heroes.map((hero) => (
                     <div
                         key={hero.id}
+                        onClick={() => navigate("/profile", { state: { hero } })}
                         style={{
-                            background: '#111',
+                            background: 'black',
                             border: '1px solid #555',
                             padding: '15px',
                             borderRadius: '10px',
                             width: '300px',
-                            textAlign: 'center',
                             cursor: 'pointer'
                         }}
-                        onClick={() => navigate('/profile', { state: { hero } })}
                     >
-                        {hero.images.length > 0 && (
+                        <h3>{hero.name}</h3>
+                        <p>{hero.story}</p>
+
+                        {/* ✅ Priority to profileImage, fallback to first image */}
+                        {hero.profileImage ? (
+                            <img
+                                src={hero.profileImage}
+                                alt={hero.name}
+                                style={{ width: '100%', borderRadius: '10px', marginBottom: '10px' }}
+                            />
+                        ) : hero.images?.length > 0 && (
                             <img
                                 src={hero.images[0]}
                                 alt={hero.name}
-                                style={{ width: '100%', borderRadius: '8px' }}
+                                style={{ width: '100%', borderRadius: '10px', marginBottom: '10px' }}
                             />
                         )}
-                        <h3 style={{ marginTop: '10px' }}>{hero.name}</h3>
-                        <button style={{
-                            marginTop: '10px',
-                            padding: '8px 16px',
-                            background: '#4caf50',
-                            border: 'none',
-                            color: 'white',
-                            borderRadius: '5px',
-                            cursor: 'pointer'
-                        }}>
-                            {t.readMore}
-                        </button>
+
+                        {hero.videos?.length > 0 && (
+                            <video controls width="100%">
+                                <source src={hero.videos[0]} type="video/mp4" />
+                            </video>
+                        )}
                     </div>
                 ))}
             </div>

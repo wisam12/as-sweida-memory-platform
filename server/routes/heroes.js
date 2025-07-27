@@ -4,25 +4,39 @@ const path = require('path');
 const upload = require('../middleware/upload');
 const router = express.Router();
 
-// Submit a new hero story
+// Submit new hero (POST)
 router.post('/submit-hero', upload.fields([
     { name: 'images', maxCount: 10 },
-    { name: 'videos', maxCount: 10 }
+    { name: 'videos', maxCount: 10 },
+    { name: 'profileImage', maxCount: 1 }
 ]), (req, res) => {
     const { name, story } = req.body;
     const timestamp = Date.now();
     const folderName = `${name.replace(/\s+/g, '_')}_${timestamp}`;
     const heroDir = path.join(__dirname, '../public/pending_heroes', folderName);
 
+    // Make sure target directory exists
     fs.mkdirSync(heroDir, { recursive: true });
 
     const meta = {
         name,
         story,
-        submittedAt: new Date().toISOString()
+        submittedAt: new Date().toISOString(),
+        images: [],
+        videos: []
     };
-    fs.writeFileSync(path.join(heroDir, 'meta.json'), JSON.stringify(meta, null, 2));
 
+    // Save profile image
+    if (req.files.profileImage && req.files.profileImage.length > 0) {
+        const file = req.files.profileImage[0];
+        const ext = path.extname(file.originalname);
+        const uniqueName = `${Date.now()}-profile${ext}`;
+        const dest = path.join(heroDir, uniqueName);
+        fs.renameSync(file.path, dest);
+        meta.profileImage = `/heroes_input/${folderName}/${uniqueName}`;
+    }
+
+    // Save other files
     const saveFiles = (files, type) => {
         if (!files) return;
         files.forEach(file => {
@@ -30,16 +44,24 @@ router.post('/submit-hero', upload.fields([
             const uniqueName = `${Date.now()}-${type}${ext}`;
             const dest = path.join(heroDir, uniqueName);
             fs.renameSync(file.path, dest);
+
+            const pathForClient = `/heroes_input/${folderName}/${uniqueName}`;
+            if (type === 'image') meta.images.push(pathForClient);
+            if (type === 'video') meta.videos.push(pathForClient);
         });
     };
 
     saveFiles(req.files.images, 'image');
     saveFiles(req.files.videos, 'video');
 
+    // Write metadata file
+    fs.writeFileSync(path.join(heroDir, 'meta.json'), JSON.stringify(meta, null, 2));
+
     res.status(200).json({ message: 'Hero submitted successfully.' });
 });
 
-// Get all pending heroes for admin review
+
+// Get pending heroes
 router.get('/pending-heroes', (req, res) => {
     const dirPath = path.join(__dirname, '../public/pending_heroes');
     const heroes = [];
@@ -55,27 +77,23 @@ router.get('/pending-heroes', (req, res) => {
     res.json(heroes);
 });
 
-// Approve hero (move folder to heroes_input)
+
+// Approve hero (move from pending_heroes to heroes_input)
 router.post('/approve', (req, res) => {
     const { folderName } = req.body;
-    const sourcePath = path.join(__dirname, '..', 'public', 'pending_heroes', folderName);
-    const destPath = path.join(__dirname, '..', 'public', 'heroes_input', folderName);
+    const source = path.join(__dirname, '../public/pending_heroes', folderName);
+    const dest = path.join(__dirname, '../public/heroes_input', folderName);
 
     try {
-        if (!fs.existsSync(destPath)) {
-            fs.mkdirSync(path.dirname(destPath), { recursive: true });
-        }
-
-        fs.renameSync(sourcePath, destPath);
-
+        fs.renameSync(source, dest);
         res.status(200).send('Hero approved and moved successfully');
-    } catch (error) {
-        console.error('Error approving hero:', error);
+    } catch (err) {
+        console.error('Error moving hero folder:', err);
         res.status(500).send('Failed to approve hero');
     }
 });
 
-// Reject hero (delete folder)
+// Reject (delete) hero
 router.delete('/reject/:id', (req, res) => {
     const id = req.params.id;
     const targetPath = path.join(__dirname, '../public/pending_heroes', id);
@@ -88,7 +106,7 @@ router.delete('/reject/:id', (req, res) => {
     res.json({ message: 'Hero rejected' });
 });
 
-// Load all approved heroes
+// Get all approved heroes
 router.get('/heroes', (req, res) => {
     const dirPath = path.join(__dirname, '../public/heroes_input');
     const heroes = [];
@@ -97,26 +115,7 @@ router.get('/heroes', (req, res) => {
         const metaPath = path.join(dirPath, folder, 'meta.json');
         if (fs.existsSync(metaPath)) {
             const meta = JSON.parse(fs.readFileSync(metaPath));
-            const hero = {
-                id: folder,
-                ...meta,
-                images: [],
-                videos: []
-            };
-
-            const files = fs.readdirSync(path.join(dirPath, folder));
-            files.forEach(file => {
-                const ext = path.extname(file).toLowerCase();
-                const url = `/heroes_input/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`;
-                if ([".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
-                    hero.images.push(url);
-                }
-                if (ext === ".mp4") {
-                    hero.videos.push(url);
-                }
-            });
-
-            heroes.push(hero);
+            heroes.push({ id: folder, ...meta });
         }
     });
 
