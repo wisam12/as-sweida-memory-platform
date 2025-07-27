@@ -4,7 +4,7 @@ const path = require('path');
 const upload = require('../middleware/upload');
 const router = express.Router();
 
-// post new hero
+// Submit a new hero story
 router.post('/submit-hero', upload.fields([
     { name: 'images', maxCount: 10 },
     { name: 'videos', maxCount: 10 }
@@ -23,22 +23,23 @@ router.post('/submit-hero', upload.fields([
     };
     fs.writeFileSync(path.join(heroDir, 'meta.json'), JSON.stringify(meta, null, 2));
 
-    const saveFiles = (files) => {
+    const saveFiles = (files, type) => {
         if (!files) return;
         files.forEach(file => {
-            const dest = path.join(heroDir, file.originalname);
+            const ext = path.extname(file.originalname);
+            const uniqueName = `${Date.now()}-${type}${ext}`;
+            const dest = path.join(heroDir, uniqueName);
             fs.renameSync(file.path, dest);
         });
     };
 
-    saveFiles(req.files.images);
-    saveFiles(req.files.videos);
+    saveFiles(req.files.images, 'image');
+    saveFiles(req.files.videos, 'video');
 
     res.status(200).json({ message: 'Hero submitted successfully.' });
 });
 
-
-//  get qeue heros
+// Get all pending heroes for admin review
 router.get('/pending-heroes', (req, res) => {
     const dirPath = path.join(__dirname, '../public/pending_heroes');
     const heroes = [];
@@ -54,18 +55,15 @@ router.get('/pending-heroes', (req, res) => {
     res.json(heroes);
 });
 
-
-// approve new hero
+// Approve hero (move folder to heroes_input)
 router.post('/approve', (req, res) => {
     const { folderName } = req.body;
-
     const sourcePath = path.join(__dirname, '..', 'public', 'pending_heroes', folderName);
     const destPath = path.join(__dirname, '..', 'public', 'heroes_input', folderName);
 
     try {
-        const destinationDir = path.join(__dirname, '..', 'public', 'heroes_input');
-        if (!fs.existsSync(destinationDir)) {
-            fs.mkdirSync(destinationDir, { recursive: true });
+        if (!fs.existsSync(destPath)) {
+            fs.mkdirSync(path.dirname(destPath), { recursive: true });
         }
 
         fs.renameSync(sourcePath, destPath);
@@ -77,8 +75,7 @@ router.post('/approve', (req, res) => {
     }
 });
 
-
-// delete a hero
+// Reject hero (delete folder)
 router.delete('/reject/:id', (req, res) => {
     const id = req.params.id;
     const targetPath = path.join(__dirname, '../public/pending_heroes', id);
@@ -91,6 +88,7 @@ router.delete('/reject/:id', (req, res) => {
     res.json({ message: 'Hero rejected' });
 });
 
+// Load all approved heroes
 router.get('/heroes', (req, res) => {
     const dirPath = path.join(__dirname, '../public/heroes_input');
     const heroes = [];
@@ -109,11 +107,12 @@ router.get('/heroes', (req, res) => {
             const files = fs.readdirSync(path.join(dirPath, folder));
             files.forEach(file => {
                 const ext = path.extname(file).toLowerCase();
-                if (ext === ".jpg" || ext === ".png" || ext === ".webp") {
-                    hero.images.push(`/public/heroes_input/${folder}/${file}`);
+                const url = `/heroes_input/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`;
+                if ([".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
+                    hero.images.push(url);
                 }
                 if (ext === ".mp4") {
-                    hero.videos.push(`/public/heroes_input/${folder}/${file}`);
+                    hero.videos.push(url);
                 }
             });
 
@@ -123,8 +122,5 @@ router.get('/heroes', (req, res) => {
 
     res.json(heroes);
 });
-
-
-
 
 module.exports = router;

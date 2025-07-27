@@ -1,44 +1,36 @@
-﻿import React from 'react'
-import { useLanguage } from '../LanguageContext'
+﻿import React from 'react';
+import { useLanguage } from '../LanguageContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const heroData = {
-    "ghassan": {
-        nameKey: "name_ghassan",
-        storyKey: "ghassanStory",
-        video: "/videos/testimony1.mp4"
-    },
-    "aunt": {
-        nameKey: "name_aunt",
-        storyKey: "auntStory",
-        video: "/videos/aunt_hikmat.mp4"
-    },
-    "hala": {
-        nameKey: "name_hala",
-        storyKey: "halaStory",
-        video: "/public/heroes_input/hala_alkhatib/hala_alkhatib_vedio.mp4"
-    }
-}
+export default function HeroProfile() {
+    const { lang, t } = useLanguage();
+    const navigate = useNavigate();
+    const { state } = useLocation();
+    const hero = state?.hero;
 
-export default function HeroProfile({ name, onBack }) {
-    const { t } = useLanguage();
-    const hero = heroData[name];
-    if (!hero) return <p>Hero not found.</p>;
+    if (!hero) return <p>{lang === 'ar' ? 'البطل غير موجود' : 'Hero not found'}</p>;
 
     return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto', color: 'white' }}>
-            <button onClick={onBack}>{t.back}</button>
+            <button onClick={() => navigate(-1)}>{t.back}</button>
+
             <h2 style={{
                 textAlign: 'center',
                 fontSize: '2rem',
                 fontWeight: 'bold',
                 margin: '20px 0'
             }}>
-                {t[hero.nameKey]}
+                {hero.name}
             </h2>
-            <p>{t[hero.storyKey]}</p>
-            {hero.video && (
-                <video controls width="100%">
-                    <source src={hero.video} type="video/mp4" />
+
+            <p>{hero.story}</p>
+
+            {hero.videos && hero.videos.length > 0 && (
+                <video controls width="100%" style={{ marginTop: '20px' }}>
+                    <source src={`http://localhost:5000${encodeURI(hero.videos[0])}`} type="video/mp4" />
+                    {lang === 'ar'
+                        ? 'المتصفح لا يدعم تشغيل الفيديو'
+                        : 'Your browser does not support the video tag.'}
                 </video>
             )}
         </div>

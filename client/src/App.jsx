@@ -1,21 +1,21 @@
-import React from 'react'
-import Home from './pages/Home'
-import HeroProfile from './pages/HeroProfile'
-import { LanguageProvider, useLanguage } from './LanguageContext'
-import BackgroundAudio from './components/BackgroundAudio'
-import UploadHeroModal from './components/UploadHeroModal';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import HeroProfile from './pages/HeroProfile';
 import AdminPanel from './components/AdminPanel';
+import BackgroundAudio from './components/BackgroundAudio';
+import UploadHeroModal from './components/UploadHeroModal';
+import { LanguageProvider, useLanguage } from './LanguageContext';
 
-function AppRoutes() {
-    const [route, setRoute] = React.useState("home")
-    const [selectedHero, setSelectedHero] = React.useState("")
-    const { lang, setLang, t } = useLanguage()
+function MainLayout() {
+    const [selectedHero, setSelectedHero] = React.useState(null);
+    const { lang, setLang, t } = useLanguage();
 
     return (
         <div>
             <nav style={{ padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <button onClick={() => setRoute("home")}>{t.home}</button>
+                    <a href="/">{t.home}</a>
                     <UploadHeroModal />
                 </div>
                 <select value={lang} onChange={(e) => setLang(e.target.value)} style={{ marginLeft: '10px' }}>
@@ -23,19 +23,24 @@ function AppRoutes() {
                     <option value="en">English</option>
                 </select>
             </nav>
-            {{
-                home: <Home setRoute={setRoute} setSelectedHero={setSelectedHero} />,
-                profile: <HeroProfile name={selectedHero} onBack={() => setRoute("home")} />
-            }[route]}
+            <Routes>
+                <Route path="/" element={<Home setRoute={() => { }} setSelectedHero={setSelectedHero} />} />
+                <Route path="/profile" element={<HeroProfile name={selectedHero} onBack={() => window.history.back()} />} />
+            </Routes>
         </div>
-    )
+    );
 }
 
 export default function App() {
     return (
         <LanguageProvider>
-            <AppRoutes />
-            <BackgroundAudio />
+            <Router>
+                <Routes>
+                    <Route path="/admin" element={<AdminPanel />} />
+                    <Route path="/*" element={<MainLayout />} />
+                </Routes>
+                <BackgroundAudio />
+            </Router>
         </LanguageProvider>
-    )
+    );
 }
