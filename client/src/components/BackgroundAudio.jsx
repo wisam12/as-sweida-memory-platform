@@ -4,7 +4,9 @@ const audioFiles = [
     "/audio/audio1.mp3",
     "/audio/audio2.mp3",
     "/audio/audio3.mp3",
-    "/audio/hamoud_alhanawi.mp3"
+    "/audio/audio4.mp3",
+    "/audio/audio5.mp3",
+    "/audio/audio6.mp3"
 ];
 
 export default function BackgroundAudio() {

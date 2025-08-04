@@ -23,7 +23,7 @@ export default function HeroCard({ name, image, onClick }) {
                     alt={name}
                     style={{
                         width: '100%',
-                        height: '200px',
+                        height: '300px',
                         objectFit: 'cover',
                         borderRadius: '8px',
                         marginBottom: '15px',
