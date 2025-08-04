@@ -9,7 +9,7 @@ export default function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/heroes')
+        fetch(`${import.meta.env.VITE_API_URL}/api/heroes`)
             .then(res => res.json())
             .then(data => setHeroes(data))
             .catch(err => console.error("Failed to load heroes:", err));

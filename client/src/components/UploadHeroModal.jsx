@@ -69,7 +69,7 @@ const UploadHeroModal = () => {
         formData.videos.forEach((file) => form.append("videos", file));
 
         try {
-            const response = await fetch("http://localhost:5000/api/submit-hero", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/submit-hero`, {
                 method: "POST",
                 body: form,
             });
