@@ -10,21 +10,26 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // === Middleware ===
-
-// מאפשר בקשות CORS (למשל מה-Frontend על פורט 5173)
 app.use(cors());
-
-// מאפשר קריאת JSON בבקשות POST
 app.use(express.json());
 
-// קבצים סטטיים
+// === קבצים סטטיים ===
 app.use('/heroes_input', express.static(path.join(__dirname, 'public', 'heroes_input')));
 app.use('/pending_heroes', express.static(path.join(__dirname, 'public', 'pending_heroes')));
-app.use('/tmp', express.static(path.join(__dirname, 'public', 'tmp'))); // אם יש שימוש בתיקייה זמנית
-app.use('/public', express.static(path.join(__dirname, 'public'))); // אופציונלי אם תרצה
+app.use('/tmp', express.static(path.join(__dirname, 'public', 'tmp')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// === ראוטים של API ===
+// === API Routes ===
 app.use('/api', heroesRoutes);
+
+// === הפניית בקשות React ל-client/dist ===
+// שורת הקסם – נגיש את קבצי React המובנים מהשרת
+app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+
+// לכל בקשה אחרת (כולל /) – החזר את index.html של React
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+});
 
 // === הפעלת השרת ===
 app.listen(PORT, () => {
