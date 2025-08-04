@@ -14,7 +14,7 @@ export default function AdminHeroCard({ hero, onApprove, onReject }) {
             {/* תמונת פרופיל */}
             {hero.profileImage && (
                 <img
-                    src={`http://localhost:5000${hero.profileImage.replace('/heroes_input', '/pending_heroes')}`}
+                    src={`${import.meta.env.VITE_API_URL}${hero.profileImage.replace('/heroes_input', '/pending_heroes')}`}
                     alt={hero.name}
                     className="hero-card-image"
                 />
@@ -67,7 +67,7 @@ export default function AdminHeroCard({ hero, onApprove, onReject }) {
                                 {hero.images.map((img, index) => (
                                     <img
                                         key={index}
-                                        src={`http://localhost:5000${img.replace('/heroes_input', '/pending_heroes')}`}
+                                        src={`${import.meta.env.VITE_API_URL}${img.replace('/heroes_input', '/pending_heroes')}`}
                                         alt={`extra-${index}`}
                                         style={{ width: '100%', maxWidth: '120px', borderRadius: '5px' }}
                                     />
@@ -88,7 +88,7 @@ export default function AdminHeroCard({ hero, onApprove, onReject }) {
                                     style={{ borderRadius: '5px', marginBottom: '10px' }}
                                 >
                                     <source
-                                        src={`http://localhost:5000${video.replace('/heroes_input', '/pending_heroes')}`}
+                                        src={`${import.meta.env.VITE_API_URL}${video.replace('/heroes_input', '/pending_heroes')}`}
                                         type="video/mp4"
                                     />
                                     Your browser does not support the video tag.
