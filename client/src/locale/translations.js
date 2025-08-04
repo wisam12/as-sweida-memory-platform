@@ -1,0 +1,40 @@
+export const translations = {
+    "ar": {
+        "home": "الصفحة الرئيسية",
+        "video": "شهادة مصورة",
+        "title": "🌿 ذاكرة السويداء",
+        "subtitle": "في هذا المنبر نُخلد ضحايا ومقاتلي مجزرة السويداء.",
+        "readMore": "اقرأ المزيد",
+        "name": "الاسم",
+        "story": "القصة",
+        "back": "⬅ العودة",
+        "videoTestimony": "شهادة مصورة",
+        "name_ghassan": "غسان جميل كرداب",
+        "ghassanStory": "أب شاهد أطفاله يُقتلون أمام عينيه ويروي قصته في شهادة مصورة.",
+        "name_aunt": "عمة حكمت الحجري",
+        "auntStory": "-",
+        "name_hala": "حلا الخطيب",
+        "halaStory": "#حلا_الخطيب، الطفلة الناجية من #مجزرة_السويداء...\nاختبأت في خزانة، عندما اقتحم مسلحون من جماعة الجولاني منزل عائلتها في السويداء، وقتلوا جميع أفراد أسرتها.\n#حلا سمعت سقوط أهلها واحدًا تلو الآخر، دون أن تملك سوى دموعها وصمتها.\n\nرصاصة واحدة تركت ندبة على وجه #حلا الملائكي،\nنجَت #حلا بروحها وبجسدها، لكن #قلبها مليء بندوب لا تُشفى.\n#حلا مش بس طفلة، هي رمز #للصبر، شاهدة على #وجع كبير #وسكوت أكبر.\n\nبقيت #حلا بلا عائلة، بلا بيت، وبجرح ستبقى تحمله إلى الأبد 💔\n\n#حلا: ما رح تكوني لحالك، ووجعك وجعنا، وحكايتك رح تظل صوت كل طفل انظلم وانكسر",
+        "images": "صور إضافية",
+        "videos": "فيديوهات"
+    },
+    "en": {
+        "home": "Home",
+        "video": "Video Testimony",
+        "title": "🌿 As-Sweida Memory",
+        "subtitle": "This platform commemorates the victims and heroes of the As-Sweida massacre.",
+        "readMore": "Read More",
+        "name": "Name",
+        "story": "Story",
+        "back": "⬅ Back",
+        "videoTestimony": "Video Testimony",
+        "name_ghassan": "Ghassan Jamil Kordab",
+        "ghassanStory": "A father who saw his children killed in front of his eyes shares his testimony.",
+        "name_aunt": "Aunt of Hikmat Al-Hajri",
+        "auntStory": "-",
+        "name_hala": "Hala Al-Khatib",
+        "halaStory": "Hala Al-Khatib, the young survivor of the Sweida massacre, hid in a closet as her family was killed. She bears a scar on her face and deep wounds in her heart, yet stands as a symbol of patience, loss, and unspoken pain.",
+        "images": "Additional Images",
+        "videos": "Videos"
+    }
+};
